@@ -84,10 +84,11 @@ const styles = StyleSheet.create({
     marginRight: 20,
     marginTop: 15,
     fontSize: 16,
+    fontFamily: 'Nunito-ExtraBold',
     color: '#f3816c',
   },
   wrapper: { marginTop: 20, marginLeft: 20, marginRight: 20 },
-  sectionTitle: { fontSize: 16, color: '#ffb970', fontWeight: 'bold' },
+  sectionTitle: { fontSize: 16, color: '#ffb970', fontFamily: 'Nunito-ExtraBold' },
   kolomGrafik: {
     height: 46,
     backgroundColor: '#F9DCC4',
@@ -140,10 +141,12 @@ const styles = StyleSheet.create({
     color: '#F18C23',
     fontSize: 16,
     marginLeft: 30,
+    fontFamily: 'Nunito-Regular',
   },
   statusLevelText: {
     color: '#F3816C',
     fontSize: 16,
+    fontFamily: 'Nunito-ExtraBold',
     marginLeft: 30,
   }
 });
