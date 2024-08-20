@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
+import Logo from '../../assets/logo.svg'
 import Bar from '../../assets/bar.svg';
 import BottomBar from '../../assets/bottombar.svg'
 import Sentiment from '../../assets/sentiment_satisfied.svg'
@@ -7,7 +8,7 @@ import Sentiment from '../../assets/sentiment_satisfied.svg'
 const Main = () => {
   return (
     <View>
-      <Bar width={400} height={270} />
+      <TopBar />
       <Text style={styles.monitoringStatus}>Monitoring Status: Off</Text>
       <Heartbeat />
       <Brainwave />
@@ -16,6 +17,24 @@ const Main = () => {
     </View >
   );
 };
+
+const TopBar = () => {
+  return (
+    <View>
+      <Bar width={400} height={270} />
+      <View style={styles.title}>
+        <View style={styles.navText}>
+          <Text style={styles.titleText}>Heart to Mind Monitor</Text>
+          <Text style={styles.navDesc}>Stress therapy from your</Text>
+          <Text style={styles.navDesc}>Heart to your mind</Text>
+        </View>
+        <View style={styles.mainLogo}>
+          <Logo />
+        </View>
+      </View>
+    </View>
+  )
+}
 
 const Heartbeat = () => {
   return (
@@ -38,7 +57,7 @@ const Heartbeat = () => {
 const Brainwave = () => {
   return (
     <View style={styles.wrapper}>
-      <Text style={styles.sectionTitle}>Brainwave</Text>
+      <Text style={styles.sectionTitle}>Meditation</Text>
       <View style={styles.kolomGrafik}>
         <Text style={styles.statusText}>
           -
@@ -79,6 +98,29 @@ const BottomNavBar = () => {
 export default Main;
 
 const styles = StyleSheet.create({
+  title: {
+    position: 'absolute',
+    top: 40,
+    flexDirection: 'row'
+  },
+  navText: {
+    top: 20,
+    left: 30
+  },
+  titleText: {
+    fontSize: 24,
+    fontFamily: 'Nunito-ExtraBold',
+    color: '#D15B46'
+  },
+  navDesc: {
+    fontSize: 16,
+    fontFamily: 'Nunito-Medium',
+    color: '#ffffff'
+  },
+  mainLogo: {
+    right: 60,
+    top: 40
+  },
   monitoringStatus: {
     textAlign: 'right',
     marginRight: 20,

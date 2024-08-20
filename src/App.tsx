@@ -8,10 +8,10 @@ import Authentication from './pages/auth';
 const App = () => {
   return (
     <View>
-      {/* <Main /> */}
+      <Main />
       {/* <PrototypeMain /> */}
       {/* <PrototypeGrafik /> */}
-      <Authentication />
+      {/* <Authentication /> */}
     </View>
   );
 };

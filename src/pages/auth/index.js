@@ -1,4 +1,4 @@
-import { Button, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import React from 'react'
 import Logo from '../../assets/logo.svg'
 
@@ -33,9 +33,11 @@ const AuthForm = () => {
             </View>
             <View>
                 <TextInput style={styles.inputBar} placeholder='Ketik L untuk laki-laki dan P untuk perempuan' placeholderTextColor={'#F5BFB5'} />
+                <Text style={styles.inputLabel}>Jenis Kelamin</Text>
             </View>
             <View>
                 <TextInput style={styles.inputBar} placeholder='Ketik umur, misal: 20' placeholderTextColor={'#F5BFB5'} />
+                <Text style={styles.inputLabel}>Umur</Text>
             </View>
         </View>
     )
@@ -77,6 +79,7 @@ const styles = StyleSheet.create({
     },
     authBar: {
         position: 'relative',
+
     },
     inputBar: {
         borderWidth: 1,
@@ -103,7 +106,13 @@ const styles = StyleSheet.create({
     },
     inputLabel: {
         position: 'absolute',
-
+        left: 60,
+        top: -12,
+        backgroundColor: '#ffffff',
+        color: '#D15B46',
+        fontSize: 16,
+        fontFamily: 'Nunito-Bold',
+        padding: 1
     },
     buttonText: {
         fontSize: 16,
