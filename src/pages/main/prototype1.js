@@ -52,7 +52,7 @@ const StressLevel = () => {
         <View style={styles.wrapper}>
             <View style={styles.kolomLevel}>
                 <Text style={styles.statusLevelText}>
-                    Level Stress : Rileks
+                    Monitoring ...
                 </Text>
             </View>
         </View>
@@ -102,9 +102,8 @@ const styles = StyleSheet.create({
     kolomLevel: {
         height: 46,
         marginTop: 10,
-        backgroundColor: '#f5d7cf',
-        borderRadius: 46 / 2,
         justifyContent: 'center',
+        aliginItems: 'center',
     },
     bottomBar: {
         position: 'relative',
@@ -140,9 +139,9 @@ const styles = StyleSheet.create({
     },
     statusLevelText: {
         color: '#F3816C',
-        fontSize: 16,
+        fontSize: 20,
         fontFamily: 'Nunito-ExtraBold',
-        marginLeft: 30,
+
     },
     notification: {
         position: 'absolute',

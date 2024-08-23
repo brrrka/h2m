@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   },
   mainLogo: {
     right: 60,
-    top: 40
+    top: 40,
   },
   monitoringStatus: {
     textAlign: 'right',
