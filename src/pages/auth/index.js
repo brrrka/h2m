@@ -1,99 +1,85 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
-import Logo from '../../assets/logo.svg'
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import Welcome from '../../component/welcomeComponent';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import LoginPage from '../auth/loginPage';
+import RegisterPage from '../auth/registerPage';
+
+const Stack = createNativeStackNavigator();
 
 const AuthenticationPage = () => {
     return (
-        <View>
-            <Welcome />
-            <AuthenticationOptions />
-        </View>
-    )
-}
+        <NavigationContainer>
+            <Stack.Navigator>
+                <Stack.Screen name="OptionPage" component={AuthenticationOptions} options={{ headerShown: false }} />
+                <Stack.Screen name="LoginPage" component={LoginPage} options={styles.loginHeader} />
+                <Stack.Screen name="RegisterPage" component={RegisterPage} options={styles.registerHeader} />
+            </Stack.Navigator>
+        </NavigationContainer>
+    );
+};
 
-const Welcome = () => {
-    return (
-        <View style={styles.welcome}>
-            <Logo />
-            <Text style={styles.welcomeText}>Welcome</Text>
-            <Text style={styles.welcomeDesc}>Silahkan Pilih Metode Untuk Masuk</Text>
-        </View>
-    )
-}
-
-const AuthenticationOptions = () => {
+const AuthenticationOptions = ({ navigation }) => {
     return (
         <View style={styles.authenticationOption}>
-            <OptionButton title='Sudah Punya Akun?' mainTitle=' Login Disini!' icon={null} />
-            <OptionButton title='Belum Punya Akun?' mainTitle=' Daftar Disini!' icon={null} />
-            <OtherMethodButton title='Login Dengan' mainTitle=' Google' icon={null} />
+            <View style={styles.welcomePlacement}>
+                <Welcome title="Welcome" desc="Silahkan Pilih Metode Untuk Masuk" />
+            </View>
+            <OptionButton title="Sudah Punya Akun?" mainTitle=" Login Disini!" icon={null} route="LoginPage" navigation={navigation} />
+            <OptionButton title="Belum Punya Akun?" mainTitle=" Daftar Disini!" icon={null} route="RegisterPage" navigation={navigation} />
+            <OtherMethodButton title="Login Dengan" mainTitle=" Google" icon={require('../../assets/icons/google.png')} />
         </View>
-    )
-}
+    );
+};
 
-const OptionButton = ({ title, mainTitle, icon }) => {
+const OptionButton = ({ title, mainTitle, icon, navigation, route }) => {
     return (
         <View style={styles.optionButtonContainer}>
-            <TouchableOpacity style={styles.optionButton}>
+            <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate(route)}>
                 {icon ? <Image source={icon} style={styles.icon} /> : null}
                 <Text style={styles.optionButtonText}>
                     {title}
-                    <Text style={styles.mainOptionButtonText}>
-                        {mainTitle}
-                    </Text>
+                    <Text style={styles.mainOptionButtonText}>{mainTitle}</Text>
                 </Text>
             </TouchableOpacity>
         </View>
-    )
-}
+    );
+};
 
 const OtherMethodButton = ({ title, mainTitle, icon }) => {
     return (
         <View style={styles.otherMethodButtonContainer}>
             <TouchableOpacity style={styles.otherMethodButton}>
                 {icon ? <Image source={icon} style={styles.icon} /> : null}
-                <Text style={styles.otherMehodButtonText}>
+                <Text style={styles.otherMethodButtonText}>
                     {title}
-                    <Text style={styles.otherMethodButtonMainText}>
-                        {mainTitle}
-                    </Text>
+                    <Text style={styles.otherMethodButtonMainText}>{mainTitle}</Text>
                 </Text>
             </TouchableOpacity>
         </View>
-    )
-}
+    );
+};
 
-export default AuthenticationPage
+export default AuthenticationPage;
 
 const styles = StyleSheet.create({
-    welcome: {
-        alignItems: 'center',
-        marginTop: 98,
-    },
-    welcomeText: {
-        marginTop: 18,
-        fontSize: 32,
-        fontFamily: 'Nunito-ExtraBold',
-        color: '#D15B46'
-    },
-    welcomeDesc: {
-        color: '#F3816C',
-        fontSize: 14,
-        fontFamily: 'Nunito-Regular',
+    welcomePlacement: {
+        bottom: 80
     },
     authenticationOption: {
-        alignSelf: 'center',
+        flex: 1, // Membuat layar AuthenticationOptions penuh
         alignItems: 'center',
-        marginTop: 40,
-        width: '90%',
+        justifyContent: 'center',
+        padding: 20,
     },
     optionButtonContainer: {
-        width: '100%', // Ukuran kontainer selebar AuthenticationOptions
-        marginVertical: 10, // Spasi vertikal di antara tombol
+        width: '100%',
+        marginVertical: 10,
     },
     optionButton: {
-        flexDirection: 'row', // Membuat ikon dan teks sejajar
-        alignItems: 'center', // Menyelaraskan item di tengah secara vertikal
+        flexDirection: 'row',
+        alignItems: 'center',
         backgroundColor: '#F3816C',
         padding: 12,
         borderRadius: 5,
@@ -112,28 +98,51 @@ const styles = StyleSheet.create({
         width: 20,
         height: 20,
         marginRight: 10,
+        opacity: 0.4,
     },
     otherMethodButtonContainer: {
-        width: '100%', // Ukuran kontainer selebar AuthenticationOptions
-        marginVertical: 50, // Spasi vertikal di antara tombol
+        width: '100%',
+        marginVertical: 50,
     },
     otherMethodButton: {
-        flexDirection: 'row', // Membuat ikon dan teks sejajar
-        alignItems: 'center', // Menyelaraskan item di tengah secara vertikal
+        flexDirection: 'row',
+        alignItems: 'center',
         backgroundColor: '#FFFF',
         padding: 12,
-        borderWidth: 0.5,
-        borderColor: 'lighter',
+        borderWidth: 1,
+        borderColor: 'lightgray',
         borderRadius: 5,
         width: '100%',
         justifyContent: 'center',
     },
-    otherMehodButtonText: {
+    otherMethodButtonText: {
         color: '#F3816C',
         fontSize: 16,
         fontFamily: 'Nunito-Regular',
     },
     otherMethodButtonMainText: {
-        fontFamily: 'Nunito-ExtraBold'
-    }
-})
+        fontFamily: 'Nunito-ExtraBold',
+    },
+    loginHeader: {
+        headerStyle: {
+            backgroundColor: '#F3816C',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+            fontFamily: 'Nunito-ExtraBold',
+            fontSize: 20,
+        },
+        title: 'Login'
+    },
+    registerHeader: {
+        headerStyle: {
+            backgroundColor: '#F3816C',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+            fontFamily: 'Nunito-ExtraBold',
+            fontSize: 20,
+        },
+        title: 'Register'
+    },
+});
