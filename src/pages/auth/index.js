@@ -1,15 +1,12 @@
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import Logo from '../../assets/logo.svg'
 
-const Authentication = () => {
+const AuthenticationPage = () => {
     return (
-        <View style={styles.logo}>
-            <ScrollView>
-                <Welcome />
-                <AuthForm />
-                <TeraphyButton />
-            </ScrollView>
+        <View>
+            <Welcome />
+            <AuthenticationOptions />
         </View>
     )
 }
@@ -19,41 +16,54 @@ const Welcome = () => {
         <View style={styles.welcome}>
             <Logo />
             <Text style={styles.welcomeText}>Welcome</Text>
-            <Text style={styles.welcomeDesc}>Silahkan lengkapi data anda</Text>
+            <Text style={styles.welcomeDesc}>Silahkan Pilih Metode Untuk Masuk</Text>
         </View>
     )
 }
 
-const AuthForm = () => {
+const AuthenticationOptions = () => {
     return (
-        <View style={styles.authForm}>
-            <View style={styles.authBar}>
-                <TextInput style={styles.inputBar} placeholder='Ketikkan nama anda' placeholderTextColor={'#F5BFB5'} />
-                <Text style={styles.inputLabel}>Nama</Text>
-            </View>
-            <View>
-                <TextInput style={styles.inputBar} placeholder='Ketik L untuk laki-laki dan P untuk perempuan' placeholderTextColor={'#F5BFB5'} />
-                <Text style={styles.inputLabel}>Jenis Kelamin</Text>
-            </View>
-            <View>
-                <TextInput style={styles.inputBar} placeholder='Ketik umur, misal: 20' placeholderTextColor={'#F5BFB5'} />
-                <Text style={styles.inputLabel}>Umur</Text>
-            </View>
+        <View style={styles.authenticationOption}>
+            <OptionButton title='Sudah Punya Akun?' mainTitle=' Login Disini!' icon={null} />
+            <OptionButton title='Belum Punya Akun?' mainTitle=' Daftar Disini!' icon={null} />
+            <OtherMethodButton title='Login Dengan' mainTitle=' Google' icon={null} />
         </View>
     )
 }
 
-const TeraphyButton = () => {
+const OptionButton = ({ title, mainTitle, icon }) => {
     return (
-        <View>
-            <Pressable style={styles.teraphyButton}>
-                <Text style={styles.buttonText}>Mulai Terapi</Text>
-            </Pressable>
+        <View style={styles.optionButtonContainer}>
+            <TouchableOpacity style={styles.optionButton}>
+                {icon ? <Image source={icon} style={styles.icon} /> : null}
+                <Text style={styles.optionButtonText}>
+                    {title}
+                    <Text style={styles.mainOptionButtonText}>
+                        {mainTitle}
+                    </Text>
+                </Text>
+            </TouchableOpacity>
         </View>
     )
 }
 
-export default Authentication
+const OtherMethodButton = ({ title, mainTitle, icon }) => {
+    return (
+        <View style={styles.otherMethodButtonContainer}>
+            <TouchableOpacity style={styles.otherMethodButton}>
+                {icon ? <Image source={icon} style={styles.icon} /> : null}
+                <Text style={styles.otherMehodButtonText}>
+                    {title}
+                    <Text style={styles.otherMethodButtonMainText}>
+                        {mainTitle}
+                    </Text>
+                </Text>
+            </TouchableOpacity>
+        </View>
+    )
+}
+
+export default AuthenticationPage
 
 const styles = StyleSheet.create({
     welcome: {
@@ -71,53 +81,59 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontFamily: 'Nunito-Regular',
     },
-    authForm: {
-        marginTop: 80,
+    authenticationOption: {
+        alignSelf: 'center',
         alignItems: 'center',
-        marginLeft: 30,
-        marginRight: 30,
+        marginTop: 40,
+        width: '90%',
     },
-    authBar: {
-        position: 'relative',
-
+    optionButtonContainer: {
+        width: '100%', // Ukuran kontainer selebar AuthenticationOptions
+        marginVertical: 10, // Spasi vertikal di antara tombol
     },
-    inputBar: {
-        borderWidth: 1,
-        height: 46,
-        width: 340,
-        marginLeft: 30,
-        marginRight: 30,
-        paddingLeft: 20,
-        borderColor: '#D15B46',
-        fontSize: 14,
-        color: '#D15B46',
-        borderRadius: 40,
-        marginBottom: 40,
-        fontFamily: 'Nunito-Medium'
-    },
-    teraphyButton: {
-        height: 46,
-        marginLeft: 30,
-        marginRight: 30,
-        borderRadius: 40,
-        backgroundColor: '#D15B46',
-        alignItems: 'center',
+    optionButton: {
+        flexDirection: 'row', // Membuat ikon dan teks sejajar
+        alignItems: 'center', // Menyelaraskan item di tengah secara vertikal
+        backgroundColor: '#F3816C',
+        padding: 12,
+        borderRadius: 5,
+        width: '100%',
         justifyContent: 'center',
     },
-    inputLabel: {
-        position: 'absolute',
-        left: 60,
-        top: -12,
-        backgroundColor: '#ffffff',
-        color: '#D15B46',
+    optionButtonText: {
+        color: '#fff',
         fontSize: 16,
-        fontFamily: 'Nunito-Bold',
-        padding: 1
+        fontFamily: 'Nunito-Regular',
     },
-    buttonText: {
-        fontSize: 16,
+    mainOptionButtonText: {
         fontFamily: 'Nunito-ExtraBold',
-        color: '#FFFFFF',
+    },
+    icon: {
+        width: 20,
+        height: 20,
+        marginRight: 10,
+    },
+    otherMethodButtonContainer: {
+        width: '100%', // Ukuran kontainer selebar AuthenticationOptions
+        marginVertical: 50, // Spasi vertikal di antara tombol
+    },
+    otherMethodButton: {
+        flexDirection: 'row', // Membuat ikon dan teks sejajar
+        alignItems: 'center', // Menyelaraskan item di tengah secara vertikal
+        backgroundColor: '#FFFF',
+        padding: 12,
+        borderWidth: 0.5,
+        borderColor: 'lighter',
+        borderRadius: 5,
+        width: '100%',
+        justifyContent: 'center',
+    },
+    otherMehodButtonText: {
+        color: '#F3816C',
+        fontSize: 16,
+        fontFamily: 'Nunito-Regular',
+    },
+    otherMethodButtonMainText: {
+        fontFamily: 'Nunito-ExtraBold'
     }
-
 })

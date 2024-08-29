@@ -4,8 +4,7 @@ import React from 'react'
 const Communication = () => {
     return (
         <View>
-            <Text>Okey?
-            </Text>
+            <Text>Okey?</Text>
         </View>
     )
 }

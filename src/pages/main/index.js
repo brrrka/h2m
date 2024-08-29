@@ -6,6 +6,7 @@ import BottomBar from '../../assets/bottombar.svg'
 import Sentiment from '../../assets/sentiment_satisfied.svg'
 
 const Main = () => {
+  console.log('Test')
   return (
     <View>
       <TopBar />
