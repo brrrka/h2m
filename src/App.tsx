@@ -10,12 +10,12 @@ import LoginPage from './pages/auth/registerPage';
 import RegisterPage from './pages/auth/loginPage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
-const Stack = createNativeStackNavigator();
+import LandingPage from './pages/auth/landing';
 
 const App = () => {
   return (
     // <View>
+    // <LandingPage />
     //   {/* <Main /> */}
     <AuthPage />
     //   {/* <LoginPage /> */}

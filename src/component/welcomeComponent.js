@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
         color: '#D15B46'
     },
     welcomeDesc: {
-        color: '#F3816C',
+        color: '#D15B46',
         fontSize: 16,
         fontFamily: 'Nunito-Regular',
     },
