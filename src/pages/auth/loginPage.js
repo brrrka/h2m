@@ -3,7 +3,7 @@ import React from 'react';
 import Welcome from '../../component/welcomeComponent';
 import GoogleLogin from '../../component/googleLoginComponent'
 
-const LoginPage = () => {
+const LoginPage = ({ navigation }) => {
     return (
         <View style={styles.mainContainer}>
             <Welcome title="Masuk" desc="Silahkan Masukkan Akun Anda" />
@@ -16,7 +16,7 @@ const LoginPage = () => {
             <View style={styles.googleLogin}>
                 <GoogleLogin bgcolor={'#FFE1DB'} />
             </View>
-            <RegisterRoute />
+            <RegisterRoute navigation={navigation} />
         </View>
     );
 }
@@ -42,13 +42,13 @@ const Button = () => {
     )
 }
 
-const RegisterRoute = () => {
+const RegisterRoute = ({ navigation }) => {
     return (
         <View style={styles.loginContainer}>
             <Text style={styles.loginText}>
                 Belum Punya Akun?
             </Text>
-            <TouchableOpacity style={styles.loginButton}>
+            <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate("RegisterPage")}>
                 <Text style={styles.loginButtonText}> Daftar</Text>
             </TouchableOpacity>
         </View>

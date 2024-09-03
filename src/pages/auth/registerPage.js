@@ -1,13 +1,13 @@
-import { Appearance, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React from 'react'
-import Welcome from '../../component/welcomeComponent'
-import GoogleLogin from '../../component/googleLoginComponent'
+import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import React from 'react';
+import Welcome from '../../component/welcomeComponent';
+import GoogleLogin from '../../component/googleLoginComponent';
 
-const RegisterPage = () => {
+const RegisterPage = ({ navigation }) => {
     return (
         <View style={styles.mainContainer}>
             <Welcome title="Daftar" desc="Silahkan daftarkan akun anda" />
-            <View>
+            <View style={styles.formContainer}>
                 <InputForm title='Email' desc='Ketikkan Email Anda' hide={false} />
                 <InputForm title='Kata Sandi' desc='Ketikkan kata sandi Anda' hide={true} />
                 <InputForm title='Konfirmasi Kata Sandi' desc='Konfirmasi kata sandi anda' hide={true} />
@@ -16,10 +16,10 @@ const RegisterPage = () => {
             <View style={styles.googleLogin}>
                 <GoogleLogin bgcolor={'#F5F5F5'} />
             </View>
-            <LoginRoute />
+            <LoginRoute navigation={navigation} />
         </View>
-    )
-}
+    );
+};
 
 const InputForm = ({ title, desc, hide }) => {
     return (
@@ -29,8 +29,8 @@ const InputForm = ({ title, desc, hide }) => {
                 {title}
             </Text>
         </View>
-    )
-}
+    );
+};
 
 const Button = () => {
     return (
@@ -39,34 +39,36 @@ const Button = () => {
                 <Text style={styles.buttonText}>Daftar</Text>
             </TouchableOpacity>
         </View>
-    )
-}
+    );
+};
 
-const LoginRoute = () => {
+const LoginRoute = ({ navigation }) => {
     return (
         <View style={styles.loginContainer}>
             <Text style={styles.loginText}>
                 Sudah Punya Akun?
             </Text>
-            <TouchableOpacity style={styles.loginButton}>
+            <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate("LoginPage")}>
                 <Text style={styles.loginButtonText}> Masuk</Text>
             </TouchableOpacity>
         </View>
-    )
-}
+    );
+};
 
-
-export default RegisterPage
+export default RegisterPage;
 
 const styles = StyleSheet.create({
     mainContainer: {
-        top: -40
+        flex: 1,
+        paddingHorizontal: 20,
+        backgroundColor: '#F5F5F5', // Menjaga warna latar belakang
+    },
+    formContainer: {
+        marginTop: 60,
     },
     inputForms: {
-        flex: 1,
         alignItems: 'center',
-        marginTop: 60,
-        marginBottom: 20
+        marginBottom: 20,
     },
     inputForm: {
         borderWidth: 1,
@@ -83,7 +85,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         color: '#D15B46',
         top: -10,
-        backgroundColor: '#F5F5F5',
+        backgroundColor: '#F5F5F5', // Menjaga warna latar belakang
         left: 50,
         paddingVertical: 0,
         fontFamily: 'Nunito-Bold',
@@ -92,40 +94,38 @@ const styles = StyleSheet.create({
     buttonSection: {
         width: '100%',
         alignItems: 'center',
-        position: 'relative',
-        top: 70
     },
     button: {
         backgroundColor: '#D15B46',
         paddingVertical: 10,
         width: '90%',
         alignItems: 'center',
-        borderRadius: 40
+        borderRadius: 40,
+        marginBottom: 40, // Disesuaikan dengan layout LoginPage
     },
     buttonText: {
         fontFamily: 'Nunito-ExtraBold',
-        fontColor: '#fffff'
+        color: '#ffffff', // Memastikan warna teks tetap putih
     },
     googleLogin: {
-        top: 100,
+        marginBottom: 100, // Disesuaikan dengan layout LoginPage
     },
     loginContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        alignContent: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     loginText: {
-        top: 120,
         color: '#D15B46',
+        bottom: 80, // Disesuaikan dengan layout LoginPage
     },
     loginButton: {
         color: '#D15B46',
-        top: 119,
+        bottom: 81, // Disesuaikan dengan layout LoginPage
     },
     loginButtonText: {
         fontFamily: 'Nunito-Bold',
         fontSize: 16,
         color: '#D15B46',
-    }
-})
+    },
+});

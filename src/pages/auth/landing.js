@@ -5,7 +5,8 @@ import Circle from '../../svg/circle.svg'
 import Logo from '../../assets/logo.svg'
 import BottomBar from '../../svg/whiteblobbot.svg'
 
-const LandingPage = () => {
+
+const LandingPage = ({ navigation }) => {
     return (
         <View style={styles.landingPage}>
             <TopBar />
@@ -14,18 +15,18 @@ const LandingPage = () => {
                 <Logo style={styles.logo} />
             </View>
             <View style={styles.buttonSection}>
-                <Button title='Daftar' />
-                <Button title='Login' />
+                <Button title='Daftar' navigation={navigation} route='RegisterPage' />
+                <Button title='Login' navigation={navigation} route='LoginPage' />
             </View>
             <BottomBar style={styles.bottomBar} />
         </View>
     )
 }
 
-const Button = ({ title }) => {
+const Button = ({ title, navigation, route }) => {
     return (
-        <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>{title}</Text>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate(route)}>
+            <Text style={styles.buttonText} >{title}</Text>
         </TouchableOpacity>
     )
 }
