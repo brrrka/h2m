@@ -1,41 +1,107 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
-import React from 'react';
+import {
+    StyleSheet,
+    Text,
+    View,
+    TextInput,
+    TouchableOpacity,
+    Alert,
+    Modal,
+} from 'react-native';
+import React, { useState } from 'react';
 import Welcome from '../../component/welcomeComponent';
 import GoogleLogin from '../../component/googleLoginComponent';
+import auth from '@react-native-firebase/auth';
+import CustomModal from '../../component/modal/mainModalComponent'
+
 
 const RegisterPage = ({ navigation }) => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalMessage, setModalMessage] = useState('');
+    const [navigateToLogin, setNavigateToLogin] = useState(false);
+
+    const SignUp = () => {
+        if (password !== confirmPassword) {
+            setModalMessage('Kata Sandi Tidak Sesuai :(');
+            setModalVisible(true);
+            return;
+        }
+
+        auth()
+            .createUserWithEmailAndPassword(email, password)
+            .then(() => {
+                setModalMessage('Akun berhasil dibuat!');
+                setModalVisible(true);
+                setNavigateToLogin(true);
+            })
+            .catch(err => {
+                setModalMessage('Gagal membuat akun: ' + err.message);
+                setModalVisible(true)
+                console.log(err);
+            });
+    };
+
+    const handleModalClose = () => {
+        setModalVisible(false);
+        if (navigateToLogin) {
+            navigation.navigate('LoginPage');
+        }
+    };
+
     return (
         <View style={styles.mainContainer}>
             <Welcome title="Daftar" desc="Silahkan daftarkan akun anda" />
             <View style={styles.formContainer}>
-                <InputForm title='Email' desc='Ketikkan Email Anda' hide={false} />
-                <InputForm title='Kata Sandi' desc='Ketikkan kata sandi Anda' hide={true} />
-                <InputForm title='Konfirmasi Kata Sandi' desc='Konfirmasi kata sandi anda' hide={true} />
+                <InputForm title="Email" desc="Ketikkan Email Anda" hide={false} value={email} setValue={setEmail} />
+                <InputForm
+                    title="Kata Sandi"
+                    desc="Ketikkan kata sandi Anda"
+                    hide={true}
+                    value={password}
+                    setValue={setPassword}
+                />
+                <InputForm
+                    title="Konfirmasi Kata Sandi"
+                    desc="Konfirmasi kata sandi anda"
+                    hide={true}
+                    value={confirmPassword}
+                    setValue={setConfirmPassword}
+                />
             </View>
-            <Button />
+            <Button OnPress={SignUp} />
             <View style={styles.googleLogin}>
                 <GoogleLogin bgcolor={'#F5F5F5'} />
             </View>
             <LoginRoute navigation={navigation} />
+            <CustomModal visible={modalVisible}
+                onClose={handleModalClose}
+                message={modalMessage} />
         </View>
     );
 };
 
-const InputForm = ({ title, desc, hide }) => {
+const InputForm = ({ title, desc, hide, value, setValue }) => {
     return (
         <View style={styles.inputForms}>
-            <TextInput style={styles.inputForm} placeholder={desc} placeholderTextColor={'#FFB6A9'} secureTextEntry={hide} />
-            <Text style={styles.titleText}>
-                {title}
-            </Text>
+            <TextInput
+                style={styles.inputForm}
+                placeholder={desc}
+                placeholderTextColor={'#FFB6A9'}
+                secureTextEntry={hide}
+                value={value}
+                onChangeText={setValue}
+            />
+            <Text style={styles.titleText}>{title}</Text>
         </View>
     );
 };
 
-const Button = () => {
+const Button = ({ OnPress }) => {
     return (
         <View style={styles.buttonSection}>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={OnPress}>
                 <Text style={styles.buttonText}>Daftar</Text>
             </TouchableOpacity>
         </View>
@@ -45,10 +111,10 @@ const Button = () => {
 const LoginRoute = ({ navigation }) => {
     return (
         <View style={styles.loginContainer}>
-            <Text style={styles.loginText}>
-                Sudah Punya Akun?
-            </Text>
-            <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate("LoginPage")}>
+            <Text style={styles.loginText}>Sudah Punya Akun?</Text>
+            <TouchableOpacity
+                style={styles.loginButton}
+                onPress={() => navigation.navigate('LoginPage')}>
                 <Text style={styles.loginButtonText}> Masuk</Text>
             </TouchableOpacity>
         </View>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "902748784452",
+    "project_id": "heart2mind-project",
+    "storage_bucket": "heart2mind-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:902748784452:android:7030bcfd6368ecdc1f3911",
+        "android_client_info": {
+          "package_name": "com.h2m_test2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQqzvrzgeZS6FI0-rL80EPIUc-acFCm1A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
