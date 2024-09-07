@@ -16,7 +16,7 @@ const saveUserData = async (name, age, gender, onSuccess, onError) => {
     const user = auth().currentUser;
     if (user) {
         const uid = user.uid;
-        console.log(uid);
+        const email = user.email;
 
         // Validasi input
         if (!name || !age || !gender) {
@@ -36,6 +36,7 @@ const saveUserData = async (name, age, gender, onSuccess, onError) => {
             const timestamp = firestore.FieldValue.serverTimestamp();
 
             await firestore().collection('users').doc(uid).set({
+                email: email,
                 name: name,
                 age: age,
                 gender: gender,

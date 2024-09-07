@@ -6,6 +6,7 @@ import PrototypeGrafik from './pages/main/prototype1';
 import ProfileForm from './pages/profile';
 import LoginPage from './pages/auth/loginPage';
 import RegisterPage from './pages/auth/registerPage';
+import ProfilePage from './pages/profile/profileDetail';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LandingPage from './pages/auth/landing';
@@ -113,6 +114,11 @@ const App = () => {
         <Stack.Screen
           name="MainPage"
           component={Main}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ProfilePage"
+          component={ProfilePage}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

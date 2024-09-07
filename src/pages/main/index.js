@@ -4,12 +4,16 @@ import Logo from '../../assets/logo.svg';
 import Bar from '../../assets/bar.svg';
 import BottomBar from '../../assets/bottombar.svg';
 import Sentiment from '../../assets/sentiment_satisfied.svg';
+import Burger from '../../component/modal/burgerModalComponent'
 
-const Main = () => {
+const Main = ({navigation}) => {
   console.log('Test');
   return (
     <View style={styles.container}>
       <TopBar />
+      <View style={styles.burger}>
+        <Burger navigation={navigation} />
+      </View>
       <Text style={styles.monitoringStatus}>Monitoring Status: Off</Text>
       <Heartbeat />
       <Brainwave />
@@ -116,6 +120,11 @@ const styles = StyleSheet.create({
   mainLogo: {
     right: 60,
     top: 40,
+  },
+  burger: {
+    position: 'absolute',
+    marginTop: 210,
+    marginLeft: 25
   },
   monitoringStatus: {
     textAlign: 'right',
