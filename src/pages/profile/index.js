@@ -1,123 +1,125 @@
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableHighlight, TouchableOpacity, View } from 'react-native'
-import React from 'react'
-import Logo from '../../assets/logo.svg'
+import {
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from 'react-native';
+import React, { useState } from 'react';
+import Welcome from '../../component/welcomeComponent';
 
-const ProfileForm = () => {
-    return (
-        <View style={styles.logo}>
-            <ScrollView>
-                <Welcome />
-                <AuthForm />
-                <TeraphyButton />
-            </ScrollView>
-        </View>
-    )
-}
+const ProfileForm = ({ navigation }) => {
+    const [name, setName] = useState('');
+    const [gender, setGender] = useState('');
+    const [age, setAge] = useState('');
 
-const Welcome = () => {
     return (
-        <View style={styles.welcome}>
-            <Logo />
-            <Text style={styles.welcomeText}>Welcome</Text>
-            <Text style={styles.welcomeDesc}>Silahkan lengkapi data anda</Text>
-        </View>
-    )
-}
-
-const AuthForm = () => {
-    return (
-        <View style={styles.authForm}>
-            <View style={styles.authBar}>
-                <TextInput style={styles.inputBar} placeholder='Ketikkan nama anda' placeholderTextColor={'#F5BFB5'} />
-                <Text style={styles.inputLabel}>Nama</Text>
+        <View style={styles.mainContainer}>
+            <Welcome title="Welcome" desc="Silahkan lengkapi data anda" />
+            <View style={styles.formContainer}>
+                <InputForm
+                    title="Nama"
+                    desc="Ketikkan nama anda"
+                    hide={false}
+                    value={name}
+                    setValue={setName}
+                />
+                <InputForm
+                    title="Jenis Kelamin"
+                    desc="Ketik L untuk laki-laki dan P untuk perempuan"
+                    hide={false}
+                    value={gender}
+                    setValue={setGender}
+                />
+                <InputForm
+                    title="Umur"
+                    desc="Ketik umur, misal: 20"
+                    hide={false}
+                    value={age}
+                    setValue={setAge}
+                />
             </View>
-            <View>
-                <TextInput style={styles.inputBar} placeholder='Ketik L untuk laki-laki dan P untuk perempuan' placeholderTextColor={'#F5BFB5'} />
-                <Text style={styles.inputLabel}>Jenis Kelamin</Text>
-            </View>
-            <View>
-                <TextInput style={styles.inputBar} placeholder='Ketik umur, misal: 20' placeholderTextColor={'#F5BFB5'} />
-                <Text style={styles.inputLabel}>Umur</Text>
-            </View>
+            <Button OnPress={() => console.log('Mulai Terapi')} />
         </View>
-    )
-}
+    );
+};
 
-const TeraphyButton = () => {
+const InputForm = ({ title, desc, hide, value, setValue }) => {
     return (
-        <View>
-            <TouchableOpacity onPress={this._onPressButton} style={styles.teraphyButton}>
+        <View style={styles.inputForms}>
+            <TextInput
+                style={styles.inputForm}
+                placeholder={desc}
+                placeholderTextColor={'#FFB6A9'}
+                secureTextEntry={hide}
+                value={value}
+                onChangeText={setValue}
+            />
+            <Text style={styles.titleText}>{title}</Text>
+        </View>
+    );
+};
+
+const Button = ({ OnPress }) => {
+    return (
+        <View style={styles.buttonSection}>
+            <TouchableOpacity style={styles.button} onPress={OnPress}>
                 <Text style={styles.buttonText}>Mulai Terapi</Text>
             </TouchableOpacity>
         </View>
-    )
-}
+    );
+};
 
-export default ProfileForm
+export default ProfileForm;
 
 const styles = StyleSheet.create({
-    welcome: {
+    mainContainer: {
+        flex: 1,
+        paddingHorizontal: 20,
+        backgroundColor: '#F5F5F5', // Tetap sesuai dengan yang ada
+    },
+    formContainer: {
+        marginTop: 60,
+    },
+    inputForms: {
         alignItems: 'center',
-        marginTop: 98,
+        marginBottom: 20,
     },
-    welcomeText: {
-        marginTop: 18,
-        fontSize: 32,
-        fontFamily: 'Nunito-ExtraBold',
-        color: '#D15B46'
-    },
-    welcomeDesc: {
-        color: '#F3816C',
-        fontSize: 14,
-        fontFamily: 'Nunito-Regular',
-    },
-    authForm: {
-        marginTop: 80,
-        alignItems: 'center',
-        marginLeft: 30,
-        marginRight: 30,
-    },
-    authBar: {
-        position: 'relative',
-
-    },
-    inputBar: {
+    inputForm: {
         borderWidth: 1,
+        borderColor: '#F9A144',
+        width: '90%',
         height: 46,
-        width: 340,
-        marginLeft: 30,
-        marginRight: 30,
+        borderRadius: 40,
         paddingLeft: 20,
-        borderColor: '#D15B46',
-        fontSize: 14,
         color: '#D15B46',
-        borderRadius: 40,
-        marginBottom: 40,
-        fontFamily: 'Nunito-Medium'
+        fontSize: 13,
+        fontFamily: 'Nunito-Medium',
     },
-    teraphyButton: {
-        height: 46,
-        marginLeft: 30,
-        marginRight: 30,
-        borderRadius: 40,
-        backgroundColor: '#D15B46',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    inputLabel: {
+    titleText: {
         position: 'absolute',
-        left: 60,
-        top: -12,
-        backgroundColor: '#ffffff',
         color: '#D15B46',
-        fontSize: 16,
+        top: -10,
+        backgroundColor: '#F5F5F5', // Menjaga warna latar belakang
+        left: 50,
+        paddingVertical: 0,
         fontFamily: 'Nunito-Bold',
-        padding: 1
+        fontSize: 16,
+    },
+    buttonSection: {
+        width: '100%',
+        alignItems: 'center',
+    },
+    button: {
+        backgroundColor: '#D15B46',
+        paddingVertical: 10,
+        width: '90%',
+        alignItems: 'center',
+        borderRadius: 40,
+        marginBottom: 40, // Sesuaikan margin dengan layout serupa
     },
     buttonText: {
-        fontSize: 16,
         fontFamily: 'Nunito-ExtraBold',
-        color: '#FFFFFF',
-    }
-
-})
+        color: '#ffffff', // Warna tetap putih
+    },
+});

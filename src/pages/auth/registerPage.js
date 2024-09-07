@@ -23,6 +23,12 @@ const RegisterPage = ({ navigation }) => {
     const [navigateToLogin, setNavigateToLogin] = useState(false);
 
     const SignUp = () => {
+        if (!email || !password || !confirmPassword) {
+            setModalMessage('Semua kolom wajib diisi!');
+            setModalVisible(true);
+            return;
+        }
+
         if (password !== confirmPassword) {
             setModalMessage('Kata Sandi Tidak Sesuai :(');
             setModalVisible(true);

@@ -1,59 +1,116 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
-import React from 'react';
+import {
+    StyleSheet,
+    Text,
+    View,
+    TextInput,
+    TouchableOpacity,
+} from 'react-native';
+import React, { useState } from 'react';
 import Welcome from '../../component/welcomeComponent';
-import GoogleLogin from '../../component/googleLoginComponent'
+import GoogleLogin from '../../component/googleLoginComponent';
+import auth from '@react-native-firebase/auth';
+import CustomModal from '../../component/modal/mainModalComponent';
 
 const LoginPage = ({ navigation }) => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalMessage, setModalMessage] = useState('');
+    const [navigateToProfile, setNavigateToProfile] = useState('');
+
+    const SignIn = () => {
+        if (!email || !password) {
+            setModalMessage('Semua Kolom Wajib Diisi!');
+            setModalVisible(true);
+            return;
+        }
+
+        auth()
+            .signInWithEmailAndPassword(email, password)
+            .then(() => {
+                setModalMessage('Berhasil Login!');
+                setModalVisible(true);
+                setNavigateToProfile(true);
+            })
+            .catch(err => {
+                setModalMessage('Gagal Login: ' + err.message);
+                setModalVisible(true);
+                console.log(err);
+            });
+    };
+
+    const handleModalClose = () => {
+        setModalVisible(false);
+        if (navigateToProfile) {
+            navigation.navigate('ProfileFormPage');
+        }
+    };
+
     return (
         <View style={styles.mainContainer}>
             <Welcome title="Masuk" desc="Silahkan Masukkan Akun Anda" />
             <View style={styles.formContainer}>
-                <InputForm title='Email' desc='Ketikkan Email Anda' hide={false} />
-                <InputForm title='Kata Sandi' desc='Ketikkan kata sandi Anda' hide={true} />
-                <InputForm title='Konfirmasi Kata Sandi' desc='Konfirmasi kata sandi anda' hide={true} />
+                <InputForm title="Email" desc="Ketikkan Email Anda" hide={false} value={email} setValue={setEmail} />
+                <InputForm
+                    title="Kata Sandi"
+                    desc="Ketikkan kata sandi Anda"
+                    hide={true}
+                    value={password}
+                    setValue={setPassword}
+                />
             </View>
-            <Button />
+            <Button OnPress={SignIn} />
             <View style={styles.googleLogin}>
                 <GoogleLogin bgcolor={'#FFE1DB'} />
             </View>
             <RegisterRoute navigation={navigation} />
+            <CustomModal
+                visible={modalVisible}
+                onClose={handleModalClose}
+                message={modalMessage}
+            />
         </View>
     );
-}
+};
 
-const InputForm = ({ title, desc, hide }) => {
+const InputForm = ({ title, desc, hide, value, setValue }) => {
     return (
         <View style={styles.inputForms}>
-            <TextInput style={styles.inputForm} placeholder={desc} placeholderTextColor={'#FFB6A9'} secureTextEntry={hide} />
-            <Text style={styles.titleText}>
-                {title}
-            </Text>
+            <TextInput
+                style={styles.inputForm}
+                placeholder={desc}
+                placeholderTextColor={'#FFB6A9'}
+                secureTextEntry={hide}
+                value={value}
+                onChangeText={setValue}
+            />
+            <Text style={styles.titleText}>{title}</Text>
         </View>
     );
-}
+};
 
-const Button = () => {
+const Button = ({ OnPress }) => {
     return (
         <View style={styles.buttonSection}>
-            <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText}>Daftar</Text>
+            <TouchableOpacity style={styles.button} onPress={OnPress}>
+                <Text style={styles.buttonText}>Login</Text>
             </TouchableOpacity>
         </View>
-    )
-}
+    );
+};
 
 const RegisterRoute = ({ navigation }) => {
     return (
         <View style={styles.loginContainer}>
-            <Text style={styles.loginText}>
-                Belum Punya Akun?
-            </Text>
-            <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate("RegisterPage")}>
+            <Text style={styles.loginText}>Belum Punya Akun?</Text>
+            <TouchableOpacity
+                style={styles.loginButton}
+                onPress={() => navigation.navigate('RegisterPage')}>
                 <Text style={styles.loginButtonText}> Daftar</Text>
             </TouchableOpacity>
         </View>
-    )
-}
+    );
+};
 
 export default LoginPage;
 
@@ -64,7 +121,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
     },
     formContainer: {
-        marginTop: 60
+        marginTop: 60,
     },
     inputForms: {
         alignItems: 'center',
@@ -101,14 +158,14 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         width: '90%',
         alignItems: 'center',
-        borderRadius: 40
+        borderRadius: 40,
     },
     buttonText: {
         fontFamily: 'Nunito-ExtraBold',
-        color: '#fffff'
+        color: '#fffff',
     },
     googleLogin: {
-        marginBottom: 100
+        marginBottom: 100,
     },
     loginContainer: {
         flexDirection: 'row',
@@ -118,15 +175,15 @@ const styles = StyleSheet.create({
     },
     loginText: {
         color: '#D15B46',
-        bottom: 80
+        bottom: 80,
     },
     loginButton: {
         color: '#D15B46',
-        bottom: 81
+        bottom: 81,
     },
     loginButtonText: {
         fontFamily: 'Nunito-Bold',
         fontSize: 16,
         color: '#D15B46',
-    }
+    },
 });
