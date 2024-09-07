@@ -110,6 +110,11 @@ const App = () => {
           component={ProfileForm}
           options={{ headerShown: false }}
         />
+        <Stack.Screen
+          name="MainPage"
+          component={Main}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
