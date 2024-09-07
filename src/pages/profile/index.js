@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import React, { useState } from 'react';
 import Welcome from '../../component/welcomeComponent';
+import LogOut from '../../component/logOutComponent'
 
 const ProfileForm = ({ navigation }) => {
     const [name, setName] = useState('');
@@ -15,6 +16,9 @@ const ProfileForm = ({ navigation }) => {
 
     return (
         <View style={styles.mainContainer}>
+            <View style={styles.logOutButton}>
+                <LogOut navigation={navigation} />
+            </View>
             <Welcome title="Welcome" desc="Silahkan lengkapi data anda" />
             <View style={styles.formContainer}>
                 <InputForm
@@ -77,6 +81,9 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: 20,
         backgroundColor: '#F5F5F5', // Tetap sesuai dengan yang ada
+    },
+    logOutButton: {
+        paddingTop: 10,
     },
     formContainer: {
         marginTop: 60,

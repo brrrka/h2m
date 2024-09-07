@@ -1,8 +1,32 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import GoogleLogo from '../assets/icons/googleLogo.svg'
+import auth from '@react-native-firebase/auth';
+import { GoogleSignin } from '@react-native-google-signin/google-signin'
+import CustomModal from './modal/mainModalComponent'
+
+async function onGoogleButtonPress() {
+    // Check if your device supports Google Play
+    await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+    // Get the users ID token
+    const { idToken } = await GoogleSignin.signIn();
+
+    console.log(idToken)
+
+    // Create a Google credential with the token
+    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+    // Sign-in the user with the credential
+    return auth().signInWithCredential(googleCredential);
+}
 
 const GoogleLoginComponent = ({ bgcolor }) => {
+    useEffect(() => {
+        GoogleSignin.configure({
+            webClientId: '902748784452-imm5bna1bn8jisqukmmt5qqlbtim1hch.apps.googleusercontent.com',
+        });
+    }, [])
+
     return (
         <View>
             <View style={styles.container}>
@@ -11,15 +35,15 @@ const GoogleLoginComponent = ({ bgcolor }) => {
                     Atau Daftar Dengan
                 </Text>
             </View>
-            <GoogleButton />
+            <GoogleButton OnPress={onGoogleButtonPress} />
         </View>
     )
 }
 
-const GoogleButton = () => {
+const GoogleButton = ({ OnPress }) => {
     return (
         <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={OnPress}>
                 <GoogleLogo style={{ height: 50, width: 50 }} />
             </TouchableOpacity>
         </View>
