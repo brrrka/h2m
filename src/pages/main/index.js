@@ -1,21 +1,91 @@
 import { StyleSheet, Text, View } from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Logo from '../../assets/logo.svg';
 import Bar from '../../assets/bar.svg';
 import BottomBar from '../../assets/bottombar.svg';
 import Sentiment from '../../assets/sentiment_satisfied.svg';
-import Burger from '../../component/modal/burgerModalComponent'
+import Burger from '../../component/modal/burgerModalComponent';
+import init from 'react_native_mqtt';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Main = ({navigation}) => {
-  console.log('Test');
+init({
+  size: 10000,
+  storageBackend: AsyncStorage,
+  defaultExpires: 1000 * 3600 * 24,
+  enableCache: true,
+  reconnect: true,
+  sync: {}
+});
+
+const Main = ({ navigation }) => {
+  const [distance, setDistance] = useState('Menunggu Koneksi...');
+  const [mqttClient, setMqttClient] = useState(null);
+  const [monitoringStatus, setMonitoringStatus] = useState('Off')
+
+  useEffect(() => {
+    const client = new Paho.MQTT.Client('192.168.100.133', 9001, 'react_native_client');
+    setMqttClient(client);
+
+    client.onConnectionLost = onConnectionLost;
+    client.onMessageArrived = onMessageArrived;
+
+    client.connect({
+      onSuccess: () => onConnect(client),
+      useSSL: false,
+      onFailure: (e) => console.log('Connect failed: ', e),
+    });
+
+    return () => {
+      if (client && client.isConnected()) {
+        client.disconnect();
+      }
+    };
+  }, []);
+
+  const onConnect = (client) => {
+    console.log('Connected to MQTT broker');
+    setDistance("Terhubung, menunggu data...");
+    setMonitoringStatus("On")
+
+    if (client) {
+      client.subscribe('sensor/distance');
+    }
+  };
+
+  const onConnectionLost = (responseObject) => {
+    if (responseObject.errorCode !== 0) {
+      console.log('onConnectionLost:', responseObject.errorMessage);
+      setDistance("Koneksi terputus, mencoba menghubungkan kembali...");
+
+      setTimeout(() => {
+        if (mqttClient) {
+          mqttClient.connect({
+            onSuccess: () => onConnect(mqttClient),
+            useSSL: false,
+            onFailure: (e) => {
+              console.log('Reconnect Failed', e);
+              setDistance("Gagal menghubungkan ulang, menghubungkan kembali...");
+            }
+          });
+        }
+      }, 5000);
+    }
+  };
+
+  const onMessageArrived = (message) => {
+    console.log('onMessageArrived:', message.payloadString);
+    setDistance(message.payloadString); // Update state dengan data jarak
+  };
+
+
   return (
     <View style={styles.container}>
       <TopBar />
       <View style={styles.burger}>
         <Burger navigation={navigation} />
       </View>
-      <Text style={styles.monitoringStatus}>Monitoring Status: Off</Text>
-      <Heartbeat />
+      <Text style={styles.monitoringStatus}>Monitoring Status: {monitoringStatus}</Text>
+      <Heartbeat distance={distance} />
       <Brainwave />
       <StressLevel />
       <BottomNavBar />
@@ -41,15 +111,15 @@ const TopBar = () => {
   );
 };
 
-const Heartbeat = () => {
+const Heartbeat = ({ distance }) => {
   return (
     <View style={styles.wrapper}>
-      <Text style={styles.sectionTitle}>Heartbeat</Text>
+      <Text style={styles.sectionTitle}>Jarak</Text>
       <View style={styles.kolomGrafik}>
-        <Text style={styles.statusText}>-</Text>
+        <Text style={styles.statusText}>{distance} cm</Text>
       </View>
       <View style={styles.kolomStatus}>
-        <Text style={styles.statusText}>Status : -</Text>
+        <Text style={styles.statusText}>Status : {distance !== '-' ? 'Received' : '-'}</Text>
       </View>
     </View>
   );
@@ -124,7 +194,7 @@ const styles = StyleSheet.create({
   burger: {
     position: 'absolute',
     marginTop: 210,
-    marginLeft: 25
+    marginLeft: 25,
   },
   monitoringStatus: {
     textAlign: 'right',
@@ -168,7 +238,7 @@ const styles = StyleSheet.create({
   bottomBar: {
     position: 'absolute',
     alignItems: 'center',
-    bottom: -30
+    bottom: -30,
   },
   middleButton: {
     marginTop: 10,
