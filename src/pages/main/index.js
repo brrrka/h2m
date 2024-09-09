@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Logo from '../../assets/logo.svg';
 import Bar from '../../assets/bar.svg';
@@ -23,7 +23,7 @@ const Main = ({ navigation }) => {
   const [monitoringStatus, setMonitoringStatus] = useState('Off')
 
   useEffect(() => {
-    const client = new Paho.MQTT.Client('192.168.100.133', 9001, 'react_native_client');
+    const client = new Paho.MQTT.Client('192.168.1.107', 9001, 'react_native_client');
     setMqttClient(client);
 
     client.onConnectionLost = onConnectionLost;
@@ -153,9 +153,13 @@ const BottomNavBar = () => {
   return (
     <View style={styles.bottomBar}>
       <BottomBar width={395} height={160} />
-      <View style={styles.middleButton} />
-      <View style={styles.mainMiddleButton} />
-      <Sentiment width={44} height={44} style={styles.sentiment} />
+      <View style={styles.middleButton}>
+        <TouchableHighlight style={styles.middleButtonTouch} onPress={() => console.log("Tombol Ditekan")} underlayColor="transparent" >
+          <View style={styles.mainMiddleButton}>
+            <Sentiment width={44} height={44} style={styles.sentiment} />
+          </View>
+        </TouchableHighlight>
+      </View>
     </View>
   );
 };
@@ -242,25 +246,28 @@ const styles = StyleSheet.create({
   },
   middleButton: {
     marginTop: 10,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#f5f5f5',
     width: 80,
     height: 80,
     position: 'absolute',
     borderRadius: 40,
   },
+  middleButtonTouch: {
+    alignItems: 'center',
+    paddingBottom: 30
+  },
   mainMiddleButton: {
-    marginTop: 20,
-    position: 'absolute',
+    marginTop: 8,
     backgroundColor: '#ffffff',
     width: 64,
     height: 64,
     borderRadius: 32,
     elevation: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   sentiment: {
-    marginTop: 30,
-    position: 'absolute',
-    elevation: 1,
+
   },
   statusText: {
     color: '#F18C23',

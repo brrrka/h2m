@@ -4,6 +4,7 @@ import {
     View,
     TextInput,
     TouchableOpacity,
+    ScrollView,
 } from 'react-native';
 import React, { useState } from 'react';
 import Welcome from '../../component/welcomeComponent';
@@ -41,35 +42,36 @@ const LoginPage = ({ navigation }) => {
 
     const handleModalClose = () => {
         setModalVisible(false);
-        if (navigateToProfile) {
-            navigation.navigate('ProfileFormPage');
-        }
+
+        navigation.navigate('ProfileFormPage');
     };
 
     return (
-        <View style={styles.mainContainer}>
-            <Welcome title="Masuk" desc="Silahkan Masukkan Akun Anda" />
-            <View style={styles.formContainer}>
-                <InputForm title="Email" desc="Ketikkan Email Anda" hide={false} value={email} setValue={setEmail} />
-                <InputForm
-                    title="Kata Sandi"
-                    desc="Ketikkan kata sandi Anda"
-                    hide={true}
-                    value={password}
-                    setValue={setPassword}
+        <ScrollView style={styles.mainContainer}>
+            <View>
+                <Welcome title="Masuk" desc="Silahkan Masukkan Akun Anda" />
+                <View style={styles.formContainer}>
+                    <InputForm title="Email" desc="Ketikkan Email Anda" hide={false} value={email} setValue={setEmail} />
+                    <InputForm
+                        title="Kata Sandi"
+                        desc="Ketikkan kata sandi Anda"
+                        hide={true}
+                        value={password}
+                        setValue={setPassword}
+                    />
+                </View>
+                <Button OnPress={SignIn} />
+                <View style={styles.googleLogin}>
+                    <GoogleLogin bgcolor={'#FFE1DB'} />
+                </View>
+                <RegisterRoute navigation={navigation} />
+                <CustomModal
+                    visible={modalVisible}
+                    onClose={handleModalClose}
+                    message={modalMessage}
                 />
             </View>
-            <Button OnPress={SignIn} />
-            <View style={styles.googleLogin}>
-                <GoogleLogin bgcolor={'#FFE1DB'} />
-            </View>
-            <RegisterRoute navigation={navigation} />
-            <CustomModal
-                visible={modalVisible}
-                onClose={handleModalClose}
-                message={modalMessage}
-            />
-        </View>
+        </ScrollView>
     );
 };
 

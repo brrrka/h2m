@@ -6,6 +6,7 @@ import {
     TouchableOpacity,
     Alert,
     Modal,
+    ScrollView,
 } from 'react-native';
 import React, { useState } from 'react';
 import Welcome from '../../component/welcomeComponent';
@@ -57,34 +58,36 @@ const RegisterPage = ({ navigation }) => {
     };
 
     return (
-        <View style={styles.mainContainer}>
-            <Welcome title="Daftar" desc="Silahkan daftarkan akun anda" />
-            <View style={styles.formContainer}>
-                <InputForm title="Email" desc="Ketikkan Email Anda" hide={false} value={email} setValue={setEmail} />
-                <InputForm
-                    title="Kata Sandi"
-                    desc="Ketikkan kata sandi Anda"
-                    hide={true}
-                    value={password}
-                    setValue={setPassword}
-                />
-                <InputForm
-                    title="Konfirmasi Kata Sandi"
-                    desc="Konfirmasi kata sandi anda"
-                    hide={true}
-                    value={confirmPassword}
-                    setValue={setConfirmPassword}
-                />
+        <ScrollView>
+            <View style={styles.mainContainer}>
+                <Welcome title="Daftar" desc="Silahkan daftarkan akun anda" />
+                <View style={styles.formContainer}>
+                    <InputForm title="Email" desc="Ketikkan Email Anda" hide={false} value={email} setValue={setEmail} />
+                    <InputForm
+                        title="Kata Sandi"
+                        desc="Ketikkan kata sandi Anda"
+                        hide={true}
+                        value={password}
+                        setValue={setPassword}
+                    />
+                    <InputForm
+                        title="Konfirmasi Kata Sandi"
+                        desc="Konfirmasi kata sandi anda"
+                        hide={true}
+                        value={confirmPassword}
+                        setValue={setConfirmPassword}
+                    />
+                </View>
+                <Button OnPress={SignUp} />
+                <View style={styles.googleLogin}>
+                    <GoogleLogin bgcolor={'#F5F5F5'} />
+                </View>
+                <LoginRoute navigation={navigation} />
+                <CustomModal visible={modalVisible}
+                    onClose={handleModalClose}
+                    message={modalMessage} />
             </View>
-            <Button OnPress={SignUp} />
-            <View style={styles.googleLogin}>
-                <GoogleLogin bgcolor={'#F5F5F5'} />
-            </View>
-            <LoginRoute navigation={navigation} />
-            <CustomModal visible={modalVisible}
-                onClose={handleModalClose}
-                message={modalMessage} />
-        </View>
+        </ScrollView>
     );
 };
 

@@ -1,4 +1,5 @@
 import {
+    ScrollView,
     StyleSheet,
     Text,
     TextInput,
@@ -88,37 +89,39 @@ const ProfileForm = ({ navigation }) => {
     };
 
     return (
-        <View style={styles.mainContainer}>
-            <View style={styles.logOutButton}>
-                <LogOut navigation={navigation} />
+        <ScrollView>
+            <View style={styles.mainContainer}>
+                <View style={styles.logOutButton}>
+                    <LogOut navigation={navigation} />
+                </View>
+                <Welcome title="Welcome" desc="Silahkan lengkapi data anda" />
+                <View style={styles.formContainer}>
+                    <InputForm
+                        title="Nama"
+                        desc="Ketikkan nama anda"
+                        hide={false}
+                        value={name}
+                        setValue={setName}
+                    />
+                    <InputForm
+                        title="Jenis Kelamin"
+                        desc="Ketik L untuk laki-laki dan P untuk perempuan"
+                        hide={false}
+                        value={gender}
+                        setValue={setGender}
+                    />
+                    <InputForm
+                        title="Umur"
+                        desc="Ketik umur, misal: 20"
+                        hide={false}
+                        value={age}
+                        setValue={setAge}
+                    />
+                </View>
+                <Button onPress={handleSubmit} />
+                <CustomModal visible={modalVisible} message={modalMessage} onClose={handleModalClose} />
             </View>
-            <Welcome title="Welcome" desc="Silahkan lengkapi data anda" />
-            <View style={styles.formContainer}>
-                <InputForm
-                    title="Nama"
-                    desc="Ketikkan nama anda"
-                    hide={false}
-                    value={name}
-                    setValue={setName}
-                />
-                <InputForm
-                    title="Jenis Kelamin"
-                    desc="Ketik L untuk laki-laki dan P untuk perempuan"
-                    hide={false}
-                    value={gender}
-                    setValue={setGender}
-                />
-                <InputForm
-                    title="Umur"
-                    desc="Ketik umur, misal: 20"
-                    hide={false}
-                    value={age}
-                    setValue={setAge}
-                />
-            </View>
-            <Button onPress={handleSubmit} />
-            <CustomModal visible={modalVisible} message={modalMessage} onClose={handleModalClose} />
-        </View>
+        </ScrollView>
     );
 };
 

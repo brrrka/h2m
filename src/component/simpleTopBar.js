@@ -2,10 +2,10 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import BackArrow from '../assets/icons/line_start_arrow_notch.svg'
 
-const TopBar = ({ title, navigation }) => {
+const TopBar = ({ title, navigation, route }) => {
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('MainPage')}>
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate(route)}>
                 <BackArrow />
             </TouchableOpacity>
             <View style={styles.textContainer}>

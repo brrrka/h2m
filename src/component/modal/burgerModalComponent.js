@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Modal, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, StyleSheet, TouchableWithoutFeedback, TouchableHighlight } from 'react-native';
 import Burger from '../../assets/icons/burger.svg';
 
 const App = ({ navigation }) => {
@@ -15,12 +15,12 @@ const App = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity
+            <TouchableHighlight
                 style={styles.button}
                 onPress={toggleModal}
             >
                 <Burger />
-            </TouchableOpacity>
+            </TouchableHighlight>
 
             <Modal
                 animationType="fade"
@@ -45,8 +45,7 @@ const App = ({ navigation }) => {
                             <TouchableOpacity
                                 style={styles.optionButton}
                                 onPress={() => {
-                                    // Handle "Riwayat" option
-                                    console.log('Riwayat clicked');
+                                    navigation.navigate('RiwayatPage')
                                     setModalVisible(false);
                                 }}
                             >
@@ -62,11 +61,14 @@ const App = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     button: {
-        backgroundColor: '#bdbdbd',
-        elevation: 2,
+        elevation: 1,
+        width: 40,
+        height: 43,
+        backgroundColor: 'transparent',
         borderRadius: 100,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        backgroundColor: 'transparent',
     },
     modalOverlay: {
         flex: 1,
@@ -86,7 +88,7 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
         backgroundColor: '#FFF7F6',
-        elevation: 4
+        elevation: 1
     },
     optionText: {
         fontSize: 14,

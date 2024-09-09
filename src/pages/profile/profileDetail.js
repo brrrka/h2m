@@ -52,7 +52,7 @@ const Profile = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <TopBar title='Akun Saya' navigation={navigation} />
+            <TopBar title='Akun Saya' navigation={navigation} route={'MainPage'} />
             <View style={styles.dataBarContainer}>
                 {loading ? (
                     <ActivityIndicator size="large" color="#D15B46" style={styles.loading} />
@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
         flex: 1,
+        backgroundColor: '#FFFFFF'
     },
     dataBarContainer: {
         paddingVertical: 30,

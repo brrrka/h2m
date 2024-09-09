@@ -11,6 +11,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LandingPage from './pages/auth/landing';
 import messaging from '@react-native-firebase/messaging';
+import RiwayatPage from './pages/riwayat';
+import DetailRiwayat from './pages/riwayat/detailRiwayatPage';
 
 const Stack = createNativeStackNavigator();
 
@@ -119,6 +121,16 @@ const App = () => {
         <Stack.Screen
           name="ProfilePage"
           component={ProfilePage}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="RiwayatPage"
+          component={RiwayatPage}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="DetailRiwayatPage"
+          component={DetailRiwayat}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
