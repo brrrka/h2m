@@ -135,6 +135,7 @@ const InputForm = ({ title, desc, hide, value, setValue }) => {
                 secureTextEntry={hide}
                 value={value}
                 onChangeText={setValue}
+                keyboardType={title === 'Umur' ? 'numeric' : 'default'}
             />
             <Text style={styles.titleText}>{title}</Text>
         </View>

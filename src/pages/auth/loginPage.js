@@ -10,6 +10,7 @@ import React, { useState } from 'react';
 import Welcome from '../../component/welcomeComponent';
 import GoogleLogin from '../../component/googleLoginComponent';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import CustomModal from '../../component/modal/mainModalComponent';
 
 const LoginPage = ({ navigation }) => {
@@ -17,7 +18,8 @@ const LoginPage = ({ navigation }) => {
     const [password, setPassword] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
-    const [navigateToProfile, setNavigateToProfile] = useState('');
+    const [navigateToProfile, setNavigateToProfile] = useState(false);
+    const [navigateToMain, setNavigateToMain] = useState(false);
 
     const SignIn = () => {
         if (!email || !password) {
@@ -28,10 +30,15 @@ const LoginPage = ({ navigation }) => {
 
         auth()
             .signInWithEmailAndPassword(email, password)
-            .then(() => {
+            .then(userCredential => {
                 setModalMessage('Berhasil Login!');
                 setModalVisible(true);
-                setNavigateToProfile(true);
+
+                // Ambil UID user yang login
+                const userId = userCredential.user.uid;
+
+                // Panggil fungsi untuk cek data di Firestore
+                checkUserData(userId);
             })
             .catch(err => {
                 setModalMessage('Gagal Login: ' + err.message);
@@ -40,10 +47,43 @@ const LoginPage = ({ navigation }) => {
             });
     };
 
+    const checkUserData = async (userId) => {
+        try {
+            // Ambil data user dari Firestore
+            const userDoc = await firestore().collection('users').doc(userId).get();
+
+            if (userDoc.exists) {
+                const userData = userDoc.data();
+
+                // Jika data lengkap, set navigateToMain true
+                if (userData.name && userData.gender && userData.age) {
+                    setNavigateToMain(true);
+                } else {
+                    // Jika data tidak lengkap, set navigateToProfile true
+                    setNavigateToProfile(true);
+                }
+            } else {
+                // Jika dokumen user tidak ada, set navigateToProfile true
+                setNavigateToProfile(true);
+            }
+        } catch (error) {
+            console.error("Error getting user data: ", error);
+            // Jika terjadi error, set navigateToProfile true
+            setNavigateToProfile(true);
+        }
+    };
+
     const handleModalClose = () => {
         setModalVisible(false);
 
-        navigation.navigate('ProfileFormPage');
+        // Navigasi sesuai state navigateToMain atau navigateToProfile
+        if (navigateToMain) {
+            navigation.navigate('MainPage');
+            setNavigateToMain(false); // Reset state setelah navigasi
+        } else if (navigateToProfile) {
+            navigation.navigate('ProfileFormPage');
+            setNavigateToProfile(false); // Reset state setelah navigasi
+        }
     };
 
     return (
@@ -118,7 +158,7 @@ export default LoginPage;
 
 const styles = StyleSheet.create({
     mainContainer: {
-        flex: 1, // Ensures the container takes up the full screen height
+        flex: 1,
         backgroundColor: '#FFE1DB',
         paddingHorizontal: 20,
     },
@@ -164,7 +204,7 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         fontFamily: 'Nunito-ExtraBold',
-        color: '#fffff',
+        color: '#ffffff',
     },
     googleLogin: {
         marginBottom: 100,

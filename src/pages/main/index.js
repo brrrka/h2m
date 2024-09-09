@@ -169,7 +169,7 @@ export default Main;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#FFFFFF',
   },
   title: {
     position: 'absolute',
@@ -265,9 +265,6 @@ const styles = StyleSheet.create({
     elevation: 2,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  sentiment: {
-
   },
   statusText: {
     color: '#F18C23',
