@@ -1,13 +1,16 @@
-import { StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, TouchableHighlight, View } from 'react-native';
+import React, { useState } from 'react';
 import Logo from '../../assets/logo.svg';
 import Bar from '../../assets/bar.svg';
 import BottomBar from '../../assets/bottombar.svg';
 import Sentiment from '../../assets/sentiment_satisfied.svg';
+import SentimentConnected from '../../assets/sentiment_very_satisfied.svg';
 import Burger from '../../component/modal/burgerModalComponent';
+import GreenNotification from '../../assets/greenNotification.svg';
 import init from 'react_native_mqtt';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// Inisialisasi MQTT
 init({
   size: 10000,
   storageBackend: AsyncStorage,
@@ -18,37 +21,48 @@ init({
 });
 
 const Main = ({ navigation }) => {
-  const [distance, setDistance] = useState('Menunggu Koneksi...');
+  const [distance, setDistance] = useState('-');
+  const [mindwave, setMindwave] = useState('-');
   const [mqttClient, setMqttClient] = useState(null);
-  const [monitoringStatus, setMonitoringStatus] = useState('Off')
+  const [monitoringStatus, setMonitoringStatus] = useState('Off');
+  const [isConnected, setIsConnected] = useState(false)
 
-  useEffect(() => {
-    const client = new Paho.MQTT.Client('192.168.1.107', 9001, 'react_native_client');
-    setMqttClient(client);
+  // Fungsi untuk memulai koneksi ke MQTT
+  const toggleMqttConnection = () => {
+    if (isConnected) {
+      // Jika sedang terhubung, putuskan koneksi
+      mqttClient?.disconnect();
+      setIsConnected(false);
+      setMonitoringStatus('Off');
+      setDistance('-');
+      setMindwave('-');
+      console.log('Disconnected from MQTT broker');
+    } else {
+      // Jika tidak terhubung, mulai koneksi
+      const client = new Paho.MQTT.Client('192.168.100.133', 9001, 'react_native_client');
+      setMqttClient(client);
 
-    client.onConnectionLost = onConnectionLost;
-    client.onMessageArrived = onMessageArrived;
+      client.onConnectionLost = onConnectionLost;
+      client.onMessageArrived = onMessageArrived;
 
-    client.connect({
-      onSuccess: () => onConnect(client),
-      useSSL: false,
-      onFailure: (e) => console.log('Connect failed: ', e),
-    });
-
-    return () => {
-      if (client && client.isConnected()) {
-        client.disconnect();
-      }
-    };
-  }, []);
+      client.connect({
+        onSuccess: () => onConnect(client),
+        useSSL: false,
+        onFailure: (e) => console.log('Connect failed: ', e),
+      });
+    }
+  };
 
   const onConnect = (client) => {
     console.log('Connected to MQTT broker');
     setDistance("Terhubung, menunggu data...");
-    setMonitoringStatus("On")
+    setMindwave("Terhubung, menunggu data...");
+    setMonitoringStatus("On");
+    setIsConnected(true); // Set status terhubung
 
     if (client) {
-      client.subscribe('sensor/distance');
+      client.subscribe('sensor/heartbeat');
+      client.subscribe('sensor/mindwave');
     }
   };
 
@@ -56,6 +70,8 @@ const Main = ({ navigation }) => {
     if (responseObject.errorCode !== 0) {
       console.log('onConnectionLost:', responseObject.errorMessage);
       setDistance("Koneksi terputus, mencoba menghubungkan kembali...");
+      setMindwave("Koneksi terputus, mencoba menghubungkan kembali...");
+      setIsConnected(false); // Set status tidak terhubung
 
       setTimeout(() => {
         if (mqttClient) {
@@ -65,6 +81,7 @@ const Main = ({ navigation }) => {
             onFailure: (e) => {
               console.log('Reconnect Failed', e);
               setDistance("Gagal menghubungkan ulang, menghubungkan kembali...");
+              setMindwave("Gagal menghubungkan ulang, menghubungkan kembali...");
             }
           });
         }
@@ -74,9 +91,12 @@ const Main = ({ navigation }) => {
 
   const onMessageArrived = (message) => {
     console.log('onMessageArrived:', message.payloadString);
-    setDistance(message.payloadString); // Update state dengan data jarak
+    if (message.destinationName === 'sensor/heartbeat') {
+      setDistance(message.payloadString); // Update distance state
+    } else if (message.destinationName === 'sensor/mindwave') {
+      setMindwave(message.payloadString); // Update mindwave state
+    }
   };
-
 
   return (
     <View style={styles.container}>
@@ -86,9 +106,9 @@ const Main = ({ navigation }) => {
       </View>
       <Text style={styles.monitoringStatus}>Monitoring Status: {monitoringStatus}</Text>
       <Heartbeat distance={distance} />
-      <Brainwave />
+      <Brainwave mindwave={mindwave} />
       <StressLevel />
-      <BottomNavBar />
+      <BottomNavBar isConnected={isConnected} toggleMqttConnection={toggleMqttConnection} />
     </View>
   );
 };
@@ -114,7 +134,7 @@ const TopBar = () => {
 const Heartbeat = ({ distance }) => {
   return (
     <View style={styles.wrapper}>
-      <Text style={styles.sectionTitle}>Jarak</Text>
+      <Text style={styles.sectionTitle}>Heartbeat</Text>
       <View style={styles.kolomGrafik}>
         <Text style={styles.statusText}>{distance} cm</Text>
       </View>
@@ -125,15 +145,15 @@ const Heartbeat = ({ distance }) => {
   );
 };
 
-const Brainwave = () => {
+const Brainwave = ({ mindwave }) => {
   return (
     <View style={styles.wrapper}>
       <Text style={styles.sectionTitle}>Meditation</Text>
       <View style={styles.kolomGrafik}>
-        <Text style={styles.statusText}>-</Text>
+        <Text style={styles.statusText}>{mindwave}</Text>
       </View>
       <View style={styles.kolomStatus}>
-        <Text style={styles.statusText}>Status : -</Text>
+        <Text style={styles.statusText}>Status : {mindwave !== '-' ? 'Received' : '-'}</Text>
       </View>
     </View>
   );
@@ -149,14 +169,23 @@ const StressLevel = () => {
   );
 };
 
-const BottomNavBar = () => {
+const BottomNavBar = ({ isConnected, toggleMqttConnection }) => {
   return (
     <View style={styles.bottomBar}>
       <BottomBar width={395} height={160} />
       <View style={styles.middleButton}>
-        <TouchableHighlight style={styles.middleButtonTouch} onPress={() => console.log("Tombol Ditekan")} underlayColor="transparent" >
-          <View style={styles.mainMiddleButton}>
-            <Sentiment width={44} height={44} style={styles.sentiment} />
+        <TouchableHighlight
+          style={styles.middleButtonTouch}
+          onPress={() => {
+            console.log("Tombol Ditekan");
+            toggleMqttConnection(); // Memulai koneksi ke MQTT
+          }}
+          underlayColor="transparent"
+        >
+          <View style={[styles.mainMiddleButton, { backgroundColor: isConnected ? '#F5BFB5' : '#FFFFFF' }]}>
+            {isConnected ? <SentimentConnected width={44} height={44} style={styles.sentiment} /> : <Sentiment width={44} height={44} style={styles.sentiment} />}
+
+            {isConnected ? <GreenNotification width={12} height={12} style={styles.greenNotification} /> : ''}
           </View>
         </TouchableHighlight>
       </View>
@@ -278,4 +307,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito-ExtraBold',
     marginLeft: 30,
   },
+  greenNotification: {
+    position: 'absolute',
+    alignSelf: 'flex-end',
+    top: 3,
+    right: 5,
+  }
 });

@@ -6,6 +6,7 @@ import auth from '@react-native-firebase/auth';
 import ConfirmModal from '../../component/modal/confirmModalComponent';
 import CustomModal from '../../component/modal/mainModalComponent';
 
+
 const Profile = ({ navigation }) => {
     const [userData, setUserData] = useState({
         email: '',
