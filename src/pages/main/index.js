@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TouchableHighlight, View } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Logo from '../../assets/logo.svg';
 import Bar from '../../assets/bar.svg';
 import BottomBar from '../../assets/bottombar.svg';
@@ -9,6 +9,8 @@ import Burger from '../../component/modal/burgerModalComponent';
 import GreenNotification from '../../assets/greenNotification.svg';
 import init from 'react_native_mqtt';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
 // Inisialisasi MQTT
 init({
@@ -25,7 +27,13 @@ const Main = ({ navigation }) => {
   const [mindwave, setMindwave] = useState('-');
   const [mqttClient, setMqttClient] = useState(null);
   const [monitoringStatus, setMonitoringStatus] = useState('Off');
-  const [isConnected, setIsConnected] = useState(false)
+  const [isConnected, setIsConnected] = useState(false);
+  const [userData, setUserData] = useState(
+    {
+      gender: '',
+      age: '',
+    }
+  )
 
   // Fungsi untuk memulai koneksi ke MQTT
   const toggleMqttConnection = () => {
@@ -46,12 +54,49 @@ const Main = ({ navigation }) => {
       client.onMessageArrived = onMessageArrived;
 
       client.connect({
-        onSuccess: () => onConnect(client),
+        onSuccess: () => { onConnect(client); sendUserDataToMqtt(); },
         useSSL: false,
         onFailure: (e) => console.log('Connect failed: ', e),
       });
     }
   };
+
+  const fetchUserData = async () => {
+    const user = auth().currentUser;
+    const uid = user.uid;
+    try {
+      const doc = await firestore().collection('users').doc(uid).get();
+      if (doc.exists) {
+        const docData = doc.data();
+        setUserData(docData);
+
+        // Kirim data ke MQTT
+      } else {
+        console.log('User data not found');
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+
+  const sendUserDataToMqtt = () => {
+    if (mqttClient && isConnected) {
+      const ageMessage = new Paho.MQTT.Message(userData.age.toString());
+      ageMessage.destinationName = 'users/age';
+      mqttClient.send(ageMessage);
+
+      const genderMessage = new Paho.MQTT.Message(userData.gender);
+      genderMessage.destinationName = 'users/gender';
+      mqttClient.send(genderMessage);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserData();
+    if (userData.age && userData.gender) {
+      sendUserDataToMqtt();
+    }
+  }, [userData])
 
   const onConnect = (client) => {
     console.log('Connected to MQTT broker');
