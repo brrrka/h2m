@@ -34,6 +34,7 @@ const Main = ({ navigation }) => {
       age: '',
     }
   )
+  // const [status, setStatus] =
 
   // Fungsi untuk memulai koneksi ke MQTT
   const toggleMqttConnection = () => {
@@ -75,7 +76,7 @@ const Main = ({ navigation }) => {
         console.log('User data not found');
       }
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      console.log('Error fetching user data:', error);
     }
   };
 
@@ -184,7 +185,7 @@ const Heartbeat = ({ distance }) => {
         <Text style={styles.statusText}>{distance} cm</Text>
       </View>
       <View style={styles.kolomStatus}>
-        <Text style={styles.statusText}>Status : {distance !== '-' ? 'Received' : '-'}</Text>
+        <Text style={styles.statusText}>Level : {distance !== '-' ? 'Received' : '-'}</Text>
       </View>
     </View>
   );
@@ -198,7 +199,7 @@ const Brainwave = ({ mindwave }) => {
         <Text style={styles.statusText}>{mindwave}</Text>
       </View>
       <View style={styles.kolomStatus}>
-        <Text style={styles.statusText}>Status : {mindwave !== '-' ? 'Received' : '-'}</Text>
+        <Text style={styles.statusText}>Level : {mindwave !== '-' ? 'Received' : '-'}</Text>
       </View>
     </View>
   );
@@ -208,7 +209,7 @@ const StressLevel = () => {
   return (
     <View style={styles.wrapper}>
       <View style={styles.kolomLevel}>
-        <Text style={styles.statusLevelText}>Level Stress : -</Text>
+        <Text style={styles.statusLevelText}>Status : -</Text>
       </View>
     </View>
   );

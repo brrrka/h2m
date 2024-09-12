@@ -1,33 +1,35 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
-const MonitoringDetail = () => {
+const MonitoringDetail = ({ record }) => {
+    const { filename, createdAt, heartbeat, brainwave, levelHeartbeat, levelBrainwave, stressStatus } = record;
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.title}>Judul Monitoring</Text>
-                <Text style={styles.date}>Tanggal Monitoring</Text>
+                <Text style={styles.title}>{filename}</Text>
+                <Text style={styles.date}>Tanggal: {new Date(createdAt.seconds * 1000).toLocaleDateString()}</Text>
             </View>
             <View style={styles.body}>
                 <View style={styles.bubble}>
                     <Text style={styles.subtitle}>Heartbeat</Text>
-                    <Text style={styles.desc}>79 dpm</Text>
-                    <Text style={styles.desc}>Level: Normal</Text>
+                    <Text style={styles.desc}>{heartbeat} dpm</Text>
+                    <Text style={styles.desc}>Level: {levelHeartbeat}</Text>
                 </View>
                 <View style={styles.bubble}>
                     <Text style={styles.subtitle}>Meditation</Text>
-                    <Text style={styles.desc}>88</Text>
-                    <Text style={styles.desc}>Level: Tinggi</Text>
+                    <Text style={styles.desc}>{brainwave}</Text>
+                    <Text style={styles.desc}>Level: {levelBrainwave} </Text>
                 </View>
             </View>
             <View style={styles.footer}>
-                <Text style={styles.summary}>Status: Rileks</Text>
+                <Text style={styles.summary}>Status: {stressStatus}</Text>
             </View>
         </View>
-    )
-}
+    );
+};
 
-export default MonitoringDetail
+export default MonitoringDetail;
 
 const styles = StyleSheet.create({
     container: {
@@ -39,27 +41,27 @@ const styles = StyleSheet.create({
         marginTop: 15,
         marginBottom: 30,
         flexDirection: 'row',
-        justifyContent: 'space-around'
+        justifyContent: 'space-around',
     },
     title: {
         color: '#BF3218',
-        fontFamily: 'Nunito-Bold'
+        fontFamily: 'Nunito-Bold',
     },
     date: {
         color: '#D15B46',
-        fontFamily: 'Nunito-Regular'
+        fontFamily: 'Nunito-Regular',
     },
     body: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        marginBottom: 10
+        marginBottom: 10,
     },
     bubble: {
         backgroundColor: '#FFE7E4',
         paddingVertical: 15,
         width: '45%',
         alignItems: 'center',
-        borderRadius: 30
+        borderRadius: 30,
     },
     subtitle: {
         color: '#BF3218',
@@ -86,5 +88,5 @@ const styles = StyleSheet.create({
         color: '#D15B46',
         fontFamily: 'Nunito-SemiBold',
         fontSize: 12,
-    }
-})
+    },
+});
