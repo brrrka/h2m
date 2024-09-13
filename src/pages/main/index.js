@@ -11,6 +11,7 @@ import init from 'react_native_mqtt';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import SaveModal from '../../component/modal/saveModalComponent';
 
 // Inisialisasi MQTT
 init({
@@ -48,7 +49,7 @@ const Main = ({ navigation }) => {
       console.log('Disconnected from MQTT broker');
     } else {
       // Jika tidak terhubung, mulai koneksi
-      const client = new Paho.MQTT.Client('192.168.100.133', 9001, 'react_native_client');
+      const client = new Paho.MQTT.Client('192.168.0.115', 9001, 'react_native_client');
       setMqttClient(client);
 
       client.onConnectionLost = onConnectionLost;
@@ -155,6 +156,7 @@ const Main = ({ navigation }) => {
       <Brainwave mindwave={mindwave} />
       <StressLevel />
       <BottomNavBar isConnected={isConnected} toggleMqttConnection={toggleMqttConnection} />
+      <SaveModal message="File Name" visible={false} />
     </View>
   );
 };
@@ -182,7 +184,7 @@ const Heartbeat = ({ distance }) => {
     <View style={styles.wrapper}>
       <Text style={styles.sectionTitle}>Heartbeat</Text>
       <View style={styles.kolomGrafik}>
-        <Text style={styles.statusText}>{distance} cm</Text>
+        <Text style={styles.statusText}>{distance} bpm</Text>
       </View>
       <View style={styles.kolomStatus}>
         <Text style={styles.statusText}>Level : {distance !== '-' ? 'Received' : '-'}</Text>
