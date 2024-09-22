@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import TopBar from '../../component/simpleTopBar';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
 const RiwayatPage = ({ navigation }) => {
     const [records, setRecords] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchMonitoringRecords = async () => {
@@ -31,6 +32,8 @@ const RiwayatPage = ({ navigation }) => {
                 }
             } catch (error) {
                 console.error("Error fetching monitoring records: ", error);
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -40,13 +43,20 @@ const RiwayatPage = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <TopBar title="Riwayat" navigation={navigation} route={'MainPage'} />
-            <ScrollView contentContainerStyle={styles.scrollContainer}>
-                <View style={styles.riwayatList}>
-                    {records.map(record => (
-                        <RiwayatListButton key={record.id} record={record} navigation={navigation} />
-                    ))}
+            {loading ? (
+                // Tampilan loading menggunakan ActivityIndicator
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color="#D15B46" />
                 </View>
-            </ScrollView>
+            ) : (
+                <ScrollView contentContainerStyle={styles.scrollContainer}>
+                    <View style={styles.riwayatList}>
+                        {records.map(record => (
+                            <RiwayatListButton key={record.id} record={record} navigation={navigation} />
+                        ))}
+                    </View>
+                </ScrollView>
+            )}
         </View>
     );
 };
@@ -73,6 +83,17 @@ const styles = StyleSheet.create({
         flex: 1,
         width: '100%',
         backgroundColor: '#FFFFFF'
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    loadingText: {
+        marginTop: 10,
+        fontFamily: 'Nunito-Regular',
+        fontSize: 16,
+        color: '#D15B46',
     },
     scrollContainer: {
         alignItems: 'center',

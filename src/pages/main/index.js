@@ -172,10 +172,7 @@ const Main = ({ navigation }) => {
       setMindwave(message.payloadString);
     } else if (message.destinationName === 'Model/ML') {
       setStatus(message.payloadString);
-
-
       if (message.payloadString === '[1]' && !musicPlayed) {
-
         setMusicPlayed(true);
       } else {
         setMusicPlayed(false);
