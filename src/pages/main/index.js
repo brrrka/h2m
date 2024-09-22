@@ -12,6 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import SaveModal from '../../component/modal/saveModalComponent';
+import SoundPlayer from 'react-native-sound-player'
 
 // Inisialisasi MQTT
 init({
@@ -29,34 +30,53 @@ const Main = ({ navigation }) => {
   const [mqttClient, setMqttClient] = useState(null);
   const [monitoringStatus, setMonitoringStatus] = useState('Off');
   const [isConnected, setIsConnected] = useState(false);
-  const [userData, setUserData] = useState(
-    {
-      gender: '',
-      age: '',
-    }
-  )
-  // const [status, setStatus] =
+  const [userData, setUserData] = useState({
+    gender: '',
+    age: '',
+  });
+  const [status, setStatus] = useState('-');
+  const [musicPlayed, setMusicPlayed] = useState(false); // state untuk melacak apakah musik sudah dimainkan
 
-  // Fungsi untuk memulai koneksi ke MQTT
+  const playSound = () => {
+    try {
+      SoundPlayer.playSoundFile('musikmeditasi_fix', 'mp3'); // Nama file audio dan ekstensinya
+      console.log('Playing sound...');
+    } catch (e) {
+      console.log('Cannot play the sound file', e);
+    }
+  };
+
+  const stopSound = () => {
+    try {
+      SoundPlayer.stop();
+      console.log('Stopping sound...');
+    } catch (e) {
+      console.log('Cannot stop the sound file', e);
+    }
+  };
+
   const toggleMqttConnection = () => {
     if (isConnected) {
-      // Jika sedang terhubung, putuskan koneksi
       mqttClient?.disconnect();
       setIsConnected(false);
       setMonitoringStatus('Off');
       setDistance('-');
       setMindwave('-');
+      setStatus('-');
+      setMusicPlayed(false);
       console.log('Disconnected from MQTT broker');
     } else {
-      // Jika tidak terhubung, mulai koneksi
-      const client = new Paho.MQTT.Client('192.168.0.115', 9001, 'react_native_client');
+      const client = new Paho.MQTT.Client('172.16.31.165', 9001, 'react_native_client');
       setMqttClient(client);
 
       client.onConnectionLost = onConnectionLost;
       client.onMessageArrived = onMessageArrived;
 
       client.connect({
-        onSuccess: () => { onConnect(client); sendUserDataToMqtt(); },
+        onSuccess: () => {
+          onConnect(client);
+          sendUserDataToMqtt();
+        },
         useSSL: false,
         onFailure: (e) => console.log('Connect failed: ', e),
       });
@@ -71,8 +91,6 @@ const Main = ({ navigation }) => {
       if (doc.exists) {
         const docData = doc.data();
         setUserData(docData);
-
-        // Kirim data ke MQTT
       } else {
         console.log('User data not found');
       }
@@ -98,27 +116,36 @@ const Main = ({ navigation }) => {
     if (userData.age && userData.gender) {
       sendUserDataToMqtt();
     }
-  }, [userData])
+  }, [userData]);
+
+  useEffect(() => {
+    if (musicPlayed) {
+      playSound();
+    } else {
+      stopSound();
+    }
+  }, [musicPlayed]);
 
   const onConnect = (client) => {
     console.log('Connected to MQTT broker');
-    setDistance("Terhubung, menunggu data...");
-    setMindwave("Terhubung, menunggu data...");
-    setMonitoringStatus("On");
-    setIsConnected(true); // Set status terhubung
+    setDistance('Terhubung, menunggu data...');
+    setMindwave('Terhubung, menunggu data...');
+    setMonitoringStatus('On');
+    setIsConnected(true);
 
     if (client) {
-      client.subscribe('sensor/heartbeat');
+      client.subscribe('BPM/val');
       client.subscribe('sensor/mindwave');
+      client.subscribe('Model/ML');
     }
   };
 
   const onConnectionLost = (responseObject) => {
     if (responseObject.errorCode !== 0) {
       console.log('onConnectionLost:', responseObject.errorMessage);
-      setDistance("Koneksi terputus, mencoba menghubungkan kembali...");
-      setMindwave("Koneksi terputus, mencoba menghubungkan kembali...");
-      setIsConnected(false); // Set status tidak terhubung
+      setDistance('Koneksi terputus, mencoba menghubungkan kembali...');
+      setMindwave('Koneksi terputus, mencoba menghubungkan kembali...');
+      setIsConnected(false);
 
       setTimeout(() => {
         if (mqttClient) {
@@ -127,9 +154,10 @@ const Main = ({ navigation }) => {
             useSSL: false,
             onFailure: (e) => {
               console.log('Reconnect Failed', e);
-              setDistance("Gagal menghubungkan ulang, menghubungkan kembali...");
-              setMindwave("Gagal menghubungkan ulang, menghubungkan kembali...");
-            }
+              setDistance('Gagal menghubungkan ulang, menghubungkan kembali...');
+              setMindwave('Gagal menghubungkan ulang, menghubungkan kembali...');
+              setStatus('Gagal menghubungkan ulang, menghubungkan kembali...');
+            },
           });
         }
       }, 5000);
@@ -138,10 +166,20 @@ const Main = ({ navigation }) => {
 
   const onMessageArrived = (message) => {
     console.log('onMessageArrived:', message.payloadString);
-    if (message.destinationName === 'sensor/heartbeat') {
-      setDistance(message.payloadString); // Update distance state
+    if (message.destinationName === 'BPM/val') {
+      setDistance(message.payloadString);
     } else if (message.destinationName === 'sensor/mindwave') {
-      setMindwave(message.payloadString); // Update mindwave state
+      setMindwave(message.payloadString);
+    } else if (message.destinationName === 'Model/ML') {
+      setStatus(message.payloadString);
+
+
+      if (message.payloadString === '[1]' && !musicPlayed) {
+
+        setMusicPlayed(true);
+      } else {
+        setMusicPlayed(false);
+      }
     }
   };
 
@@ -154,12 +192,13 @@ const Main = ({ navigation }) => {
       <Text style={styles.monitoringStatus}>Monitoring Status: {monitoringStatus}</Text>
       <Heartbeat distance={distance} />
       <Brainwave mindwave={mindwave} />
-      <StressLevel />
+      <StressLevel status={status} />
       <BottomNavBar isConnected={isConnected} toggleMqttConnection={toggleMqttConnection} />
       <SaveModal message="File Name" visible={false} />
     </View>
   );
 };
+
 
 const TopBar = () => {
   return (
@@ -184,10 +223,10 @@ const Heartbeat = ({ distance }) => {
     <View style={styles.wrapper}>
       <Text style={styles.sectionTitle}>Heartbeat</Text>
       <View style={styles.kolomGrafik}>
-        <Text style={styles.statusText}>{distance} bpm</Text>
+        <Text style={styles.statusText}>{distance ? `${distance} bpm` : "-"}</Text>
       </View>
       <View style={styles.kolomStatus}>
-        <Text style={styles.statusText}>Level : {distance !== '-' ? 'Received' : '-'}</Text>
+        <Text style={styles.statusText}>Level : {distance !== '-' ? distance >= 49 && distance <= 88 ? 'Normal' : 'Tidak Normal' : '-'}</Text>
       </View>
     </View>
   );
@@ -201,17 +240,17 @@ const Brainwave = ({ mindwave }) => {
         <Text style={styles.statusText}>{mindwave}</Text>
       </View>
       <View style={styles.kolomStatus}>
-        <Text style={styles.statusText}>Level : {mindwave !== '-' ? 'Received' : '-'}</Text>
+        <Text style={styles.statusText}>Level : {mindwave !== '-' ? mindwave < 70 ? 'Rendah' : 'Tinggi' : '-'}</Text>
       </View>
     </View>
   );
 };
 
-const StressLevel = () => {
+const StressLevel = ({ status }) => {
   return (
     <View style={styles.wrapper}>
       <View style={styles.kolomLevel}>
-        <Text style={styles.statusLevelText}>Status : -</Text>
+        <Text style={styles.statusLevelText}>Status : {status === '[0]' ? 'Rileks' : 'Tidak Rileks'}</Text>
       </View>
     </View>
   );
@@ -226,7 +265,7 @@ const BottomNavBar = ({ isConnected, toggleMqttConnection }) => {
           style={styles.middleButtonTouch}
           onPress={() => {
             console.log("Tombol Ditekan");
-            toggleMqttConnection(); // Memulai koneksi ke MQTT
+            toggleMqttConnection();
           }}
           underlayColor="transparent"
         >
@@ -361,4 +400,4 @@ const styles = StyleSheet.create({
     top: 3,
     right: 5,
   }
-});
+})
